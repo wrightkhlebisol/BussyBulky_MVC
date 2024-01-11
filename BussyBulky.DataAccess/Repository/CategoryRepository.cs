@@ -17,8 +17,6 @@ namespace BussyBulky.DataAccess.Repository
 		{ 
 			_db = db;
 		}
-		
-
 		public void Update(Category obj)
 		{
 			_db.Categories.Update(obj);
