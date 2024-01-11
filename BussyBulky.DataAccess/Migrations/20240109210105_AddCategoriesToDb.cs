@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace BussyBulkyWeb.Migrations
+namespace BussyBulky.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class AddCategoriesToDb : Migration

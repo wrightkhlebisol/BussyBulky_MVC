@@ -1,7 +1,7 @@
-﻿using BussyBulkyWeb.Models;
+﻿using BussyBulky.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BussyBulkyWeb.Data
+namespace BussyBulky.DataAccess.Data
 {
 	public class ApplicationDbContext : DbContext
 	{
