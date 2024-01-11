@@ -45,11 +45,11 @@ namespace BussyBulkyWeb.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            //Category? categoryFromDb = _db.Categories.Find(id);
-            Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Id == id);
-            //Category? categoryFromDb = _db.Categories.Where(u=>u.Id == id).FirstOrDefault();
+			//Category? categoryFromDb = _db.Categories.Find(id);
+			//Category? categoryFromDb = _db.Categories.Where(u=>u.Id == id).FirstOrDefault();
+			Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Id == id);
 
-            if (categoryFromDb == null)
+			if (categoryFromDb == null)
             {
                 return NotFound();
             }
