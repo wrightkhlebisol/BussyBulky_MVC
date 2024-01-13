@@ -1,14 +1,17 @@
 ﻿using BussyBulky.DataAccess.Repository.IRepository;
 using BussyBulky.Models;
 using BussyBulky.Models.ViewModels;
+using BussyBulky.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
-using System.IO;
 
 namespace BussyBulkyWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
