@@ -47,15 +47,21 @@ namespace BussyBulkyWeb.Areas.Customer.Controllers
 		{
 			var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
 			cartFromDb.Count += 1;
+            HttpContext.Session.SetInt32(SD.SessionCart,
+                    _unitOfWork.ShoppingCart
+                    .GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count() + 1);
 			_unitOfWork.ShoppingCart.Update(cartFromDb);
-			_unitOfWork.Save();
+            _unitOfWork.Save();
 			return RedirectToAction(nameof(Index));
 		}
 		public IActionResult Minus(int cartId)
 		{
-			var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
+			var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId, tracked:true);
 			if (cartFromDb.Count <= 1)
 			{
+				HttpContext.Session.SetInt32(SD.SessionCart,
+					_unitOfWork.ShoppingCart
+					.GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count() - 1);
 				_unitOfWork.ShoppingCart.Remove(cartFromDb);
 			}
 			else
@@ -69,9 +75,11 @@ namespace BussyBulkyWeb.Areas.Customer.Controllers
 
 		public IActionResult Remove(int cartId)
 		{
-			var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
-
-			_unitOfWork.ShoppingCart.Remove(cartFromDb);
+			var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId, tracked:true);
+            HttpContext.Session.SetInt32(SD.SessionCart,
+                    _unitOfWork.ShoppingCart
+                    .GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count() - 1);
+            _unitOfWork.ShoppingCart.Remove(cartFromDb);
 			_unitOfWork.Save();
 			return RedirectToAction(nameof(Index));
 		}
@@ -129,13 +137,13 @@ namespace BussyBulkyWeb.Areas.Customer.Controllers
 			if (applicationUser.CompanyId.GetValueOrDefault() == 0)
 			{
 				//customer account
-				ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusDelayedPending;
+				ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusDelayedPayment;
 				ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
 			}
 			else
 			{
 				// company account
-				ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusDelayedPending;
+				ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusDelayedPayment;
 				ShoppingCartVM.OrderHeader.OrderStatus = SD.StatusApproved;
 			}
 			_unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
@@ -196,7 +204,7 @@ namespace BussyBulkyWeb.Areas.Customer.Controllers
 		public IActionResult OrderConfirmation(int id)
 		{
 			OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id, includeProperties: "ApplicationUser");
-			if (orderHeader.PaymentStatus != SD.PaymentStatusDelayedPending)
+			if (orderHeader.PaymentStatus != SD.PaymentStatusDelayedPayment)
 			{
 				var service = new SessionService();
 				Session session = service.Get(orderHeader.SessionId);
